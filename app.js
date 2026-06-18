@@ -331,9 +331,9 @@ function createItemCard(item) {
 
 function openLotSpotlight(itemId) {
   spotlightItemId = itemId;
-  renderSpotlight();
   lotSpotlight.hidden = false;
   document.body.classList.add("spotlight-open");
+  renderSpotlight();
 }
 
 function closeLotSpotlight() {
