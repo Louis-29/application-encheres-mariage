@@ -1,16 +1,17 @@
 # Application d'encheres de mariage
 
-Premiere version autonome d'une application web installable sur mobile.
+Application web installable sur mobile pour organiser une vente aux encheres pendant un mariage.
 
 ## Fonctions incluses
 
-- catalogue des objets a enchérir ;
-- ajout et suppression de lots depuis l'onglet Admin ;
-- enregistrement des encheres avec prenom et montant ;
+- catalogue des objets a encherir ;
+- encheres avec prenom et montant ;
 - statistiques rapides ;
-- export/import JSON des donnees ;
-- generation d'un QR code de partage ;
-- installation mobile via PWA quand l'application est servie en HTTPS.
+- espace Admin protege par mot de passe ;
+- ajout, suppression, import et export des lots ;
+- QR code de partage ;
+- installation mobile via PWA ;
+- synchronisation temps reel avec Supabase quand les cles sont configurees.
 
 ## Lancer en local
 
@@ -22,8 +23,25 @@ Pour tester l'installation PWA et le service worker, sers le dossier avec un pet
 npx serve .
 ```
 
-Puis ouvre `http://localhost:5173`.
+Puis ouvre `http://localhost:3000` ou l'adresse indiquee par la commande.
 
-## Mise en ligne
+## Supabase temps reel
 
-Pour que plusieurs invites enchérissent ensemble depuis leur telephone, il faudra heberger l'application et remplacer le stockage local par une petite base partagee. La structure actuelle est prete pour cette evolution.
+1. Cree un projet sur Supabase.
+2. Va dans SQL Editor et execute le contenu de `supabase-schema.sql`.
+3. Va dans Project Settings > API.
+4. Recupere l'URL du projet et la cle `anon` / `public`.
+5. Remplis `supabase-config.js` :
+
+```js
+window.AUCTION_SUPABASE = {
+  url: "https://ton-projet.supabase.co",
+  anonKey: "ta-cle-anon"
+};
+```
+
+6. Envoie les fichiers modifies sur GitHub.
+
+Vercel redeploiera automatiquement l'application.
+
+Le mot de passe admin par defaut cote Supabase est `mariage2026`. Pour le changer avant installation, modifie la ligne `digest('mariage2026', 'sha256')` dans `supabase-schema.sql`.
