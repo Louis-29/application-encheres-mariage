@@ -1,7 +1,5 @@
 const STORAGE_KEY = "wedding-auction-state-v1";
 const SHARE_KEY = "wedding-auction-share-url";
-const ADMIN_SESSION_KEY = "wedding-auction-admin-unlocked";
-const ADMIN_PASSWORD_SESSION_KEY = "wedding-auction-admin-password";
 const LOCAL_ADMIN_PASSWORD_HASH = "955239c07133bb3f948cb4955a9c661dc32ed0565e78c24754148a746b56abae";
 
 const demoItems = [
@@ -42,6 +40,8 @@ let deferredInstallPrompt = null;
 let supabaseClient = null;
 let realtimeChannel = null;
 let isRemoteReady = false;
+let adminUnlocked = false;
+let adminPassword = "";
 
 const itemGrid = document.querySelector("#itemGrid");
 const itemTemplate = document.querySelector("#itemTemplate");
@@ -72,16 +72,16 @@ adminLoginForm.addEventListener("submit", async (event) => {
     adminLoginForm.reset();
     return;
   }
-  sessionStorage.setItem(ADMIN_SESSION_KEY, "true");
-  sessionStorage.setItem(ADMIN_PASSWORD_SESSION_KEY, password);
+  adminUnlocked = true;
+  adminPassword = password;
   adminLoginForm.reset();
   render();
   showToast("Espace admin deverrouille.");
 });
 
 lockAdminButton.addEventListener("click", () => {
-  sessionStorage.removeItem(ADMIN_SESSION_KEY);
-  sessionStorage.removeItem(ADMIN_PASSWORD_SESSION_KEY);
+  adminUnlocked = false;
+  adminPassword = "";
   render();
   showToast("Espace admin verrouille.");
 });
@@ -328,11 +328,11 @@ function renderQr(url) {
 }
 
 function isAdminUnlocked() {
-  return sessionStorage.getItem(ADMIN_SESSION_KEY) === "true";
+  return adminUnlocked;
 }
 
 function getAdminPassword() {
-  return sessionStorage.getItem(ADMIN_PASSWORD_SESSION_KEY) || "";
+  return adminPassword;
 }
 
 function renderAdminAccess() {
