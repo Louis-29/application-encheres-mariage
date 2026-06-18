@@ -55,48 +55,68 @@
       </section>
 
       <section id="adminView" class="view">
-        <div class="section-heading">
+        <div class="admin-lock" id="adminLock">
           <div>
-            <p class="eyebrow">Organisation</p>
-            <h2>Ajouter les lots de la soiree</h2>
+            <p class="eyebrow">Acces organisateur</p>
+            <h2>Entre le mot de passe pour gerer les lots</h2>
+            <p class="muted">Les invites peuvent enchérir, mais seuls les organisateurs peuvent ajouter ou supprimer des objets.</p>
           </div>
-          <button class="ghost-button" id="resetDemoButton" type="button">Recharger l'exemple</button>
+          <form class="admin-login" id="adminLoginForm">
+            <label>
+              Mot de passe admin
+              <input name="password" type="password" required autocomplete="current-password" placeholder="Mot de passe">
+            </label>
+            <button class="primary-button" type="submit">Deverrouiller</button>
+          </form>
         </div>
 
-        <form class="admin-form" id="itemForm">
-          <label>
-            Nom de l'objet
-            <input name="name" required maxlength="80" placeholder="Ex. Magnum de champagne signe">
-          </label>
-          <label>
-            Categorie
-            <input name="category" required maxlength="40" placeholder="Souvenir, gourmandise, experience">
-          </label>
-          <label>
-            Prix de depart (EUR)
-            <input name="startPrice" required type="number" min="1" step="1" value="20">
-          </label>
-          <label>
-            Pas minimum (EUR)
-            <input name="step" required type="number" min="1" step="1" value="5">
-          </label>
-          <label class="span-2">
-            Description
-            <textarea name="description" required maxlength="220" rows="3" placeholder="Decris le lot avec une petite touche personnelle."></textarea>
-          </label>
-          <label class="span-2">
-            URL d'image facultative
-            <input name="image" type="url" placeholder="https://...">
-          </label>
-          <button class="primary-button span-2" type="submit">Ajouter l'objet</button>
-        </form>
+        <div class="admin-panel" id="adminPanel" hidden>
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Organisation</p>
+              <h2>Ajouter les lots de la soiree</h2>
+            </div>
+            <div class="admin-actions">
+              <button class="ghost-button" id="lockAdminButton" type="button">Verrouiller</button>
+              <button class="ghost-button" id="resetDemoButton" type="button">Recharger l'exemple</button>
+            </div>
+          </div>
 
-        <div class="data-actions">
-          <button class="ghost-button" id="exportButton" type="button">Exporter les donnees</button>
-          <label class="file-button">
-            Importer
-            <input id="importInput" type="file" accept="application/json">
-          </label>
+          <form class="admin-form" id="itemForm">
+            <label>
+              Nom de l'objet
+              <input name="name" required maxlength="80" placeholder="Ex. Magnum de champagne signe">
+            </label>
+            <label>
+              Categorie
+              <input name="category" required maxlength="40" placeholder="Souvenir, gourmandise, experience">
+            </label>
+            <label>
+              Prix de depart (EUR)
+              <input name="startPrice" required type="number" min="1" step="1" value="20">
+            </label>
+            <label>
+              Pas minimum (EUR)
+              <input name="step" required type="number" min="1" step="1" value="5">
+            </label>
+            <label class="span-2">
+              Description
+              <textarea name="description" required maxlength="220" rows="3" placeholder="Decris le lot avec une petite touche personnelle."></textarea>
+            </label>
+            <label class="span-2">
+              URL d'image facultative
+              <input name="image" type="url" placeholder="https://...">
+            </label>
+            <button class="primary-button span-2" type="submit">Ajouter l'objet</button>
+          </form>
+
+          <div class="data-actions">
+            <button class="ghost-button" id="exportButton" type="button">Exporter les donnees</button>
+            <label class="file-button">
+              Importer
+              <input id="importInput" type="file" accept="application/json">
+            </label>
+          </div>
         </div>
       </section>
 

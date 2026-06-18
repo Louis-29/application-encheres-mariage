@@ -1,5 +1,7 @@
 const STORAGE_KEY = "wedding-auction-state-v1";
 const SHARE_KEY = "wedding-auction-share-url";
+const ADMIN_SESSION_KEY = "wedding-auction-admin-unlocked";
+const ADMIN_PASSWORD_HASH = "955239c07133bb3f948cb4955a9c661dc32ed0565e78c24754148a746b56abae";
 
 const demoItems = [
   {
@@ -46,6 +48,10 @@ const shareUrl = document.querySelector("#shareUrl");
 const qrImage = document.querySelector("#qrImage");
 const qrCaption = document.querySelector("#qrCaption");
 const installButton = document.querySelector("#installButton");
+const adminLock = document.querySelector("#adminLock");
+const adminPanel = document.querySelector("#adminPanel");
+const adminLoginForm = document.querySelector("#adminLoginForm");
+const lockAdminButton = document.querySelector("#lockAdminButton");
 
 document.querySelectorAll(".tab").forEach((tab) => {
   tab.addEventListener("click", () => setView(tab.dataset.view));
@@ -53,8 +59,35 @@ document.querySelectorAll(".tab").forEach((tab) => {
 
 searchInput.addEventListener("input", render);
 
+adminLoginForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const password = new FormData(adminLoginForm).get("password");
+  const passwordHash = await sha256(password);
+  if (passwordHash !== ADMIN_PASSWORD_HASH) {
+    showToast("Mot de passe incorrect.");
+    adminLoginForm.reset();
+    return;
+  }
+  sessionStorage.setItem(ADMIN_SESSION_KEY, "true");
+  adminLoginForm.reset();
+  renderAdminAccess();
+  render();
+  showToast("Espace admin deverrouille.");
+});
+
+lockAdminButton.addEventListener("click", () => {
+  sessionStorage.removeItem(ADMIN_SESSION_KEY);
+  renderAdminAccess();
+  render();
+  showToast("Espace admin verrouille.");
+});
+
 itemForm.addEventListener("submit", (event) => {
   event.preventDefault();
+  if (!isAdminUnlocked()) {
+    showToast("Deverrouille l'espace admin avant d'ajouter un objet.");
+    return;
+  }
   const formData = new FormData(itemForm);
   const item = {
     id: crypto.randomUUID(),
@@ -76,6 +109,7 @@ itemForm.addEventListener("submit", (event) => {
 });
 
 document.querySelector("#resetDemoButton").addEventListener("click", () => {
+  if (!isAdminUnlocked()) return;
   state = { items: structuredClone(demoItems) };
   saveState();
   render();
@@ -83,6 +117,7 @@ document.querySelector("#resetDemoButton").addEventListener("click", () => {
 });
 
 document.querySelector("#exportButton").addEventListener("click", () => {
+  if (!isAdminUnlocked()) return;
   const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
@@ -93,6 +128,7 @@ document.querySelector("#exportButton").addEventListener("click", () => {
 });
 
 document.querySelector("#importInput").addEventListener("change", async (event) => {
+  if (!isAdminUnlocked()) return;
   const file = event.target.files?.[0];
   if (!file) return;
   try {
@@ -178,6 +214,7 @@ function render() {
   const storedShareUrl = localStorage.getItem(SHARE_KEY) || window.location.href;
   shareUrl.value = storedShareUrl;
   renderQr(storedShareUrl);
+  renderAdminAccess();
 }
 
 function createItemCard(item) {
@@ -195,7 +232,13 @@ function createItemCard(item) {
   card.querySelector('input[name="amount"]').value = minimumBid;
   card.querySelector('input[name="amount"]').min = minimumBid;
 
-  card.querySelector(".delete-button").addEventListener("click", () => {
+  const deleteButton = card.querySelector(".delete-button");
+  deleteButton.hidden = !isAdminUnlocked();
+  deleteButton.addEventListener("click", () => {
+    if (!isAdminUnlocked()) {
+      showToast("Suppression reservee aux organisateurs.");
+      return;
+    }
     state.items = state.items.filter((candidate) => candidate.id !== item.id);
     saveState();
     render();
@@ -240,6 +283,21 @@ function renderQr(url) {
   const encoded = encodeURIComponent(url);
   qrImage.src = `https://api.qrserver.com/v1/create-qr-code/?size=280x280&data=${encoded}`;
   qrCaption.textContent = url;
+}
+
+function isAdminUnlocked() {
+  return sessionStorage.getItem(ADMIN_SESSION_KEY) === "true";
+}
+
+function renderAdminAccess() {
+  const unlocked = isAdminUnlocked();
+  adminLock.hidden = unlocked;
+  adminPanel.hidden = !unlocked;
+}
+
+async function sha256(value) {
+  const buffer = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value));
+  return [...new Uint8Array(buffer)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
 }
 
 function showToast(message) {
