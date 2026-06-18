@@ -42,6 +42,7 @@ let realtimeChannel = null;
 let isRemoteReady = false;
 let adminUnlocked = false;
 let adminPassword = "";
+let spotlightItemId = null;
 
 const itemGrid = document.querySelector("#itemGrid");
 const itemTemplate = document.querySelector("#itemTemplate");
@@ -56,12 +57,30 @@ const adminLock = document.querySelector("#adminLock");
 const adminPanel = document.querySelector("#adminPanel");
 const adminLoginForm = document.querySelector("#adminLoginForm");
 const lockAdminButton = document.querySelector("#lockAdminButton");
+const lotSpotlight = document.querySelector("#lotSpotlight");
+const closeSpotlight = document.querySelector("#closeSpotlight");
+const spotlightMedia = document.querySelector("#spotlightMedia");
+const spotlightCategory = document.querySelector("#spotlightCategory");
+const spotlightTitle = document.querySelector("#spotlightTitle");
+const spotlightDescription = document.querySelector("#spotlightDescription");
+const spotlightBid = document.querySelector("#spotlightBid");
+const spotlightLeader = document.querySelector("#spotlightLeader");
 
 document.querySelectorAll(".tab").forEach((tab) => {
   tab.addEventListener("click", () => setView(tab.dataset.view));
 });
 
 searchInput.addEventListener("input", render);
+
+closeSpotlight.addEventListener("click", closeLotSpotlight);
+
+lotSpotlight.addEventListener("click", (event) => {
+  if (event.target === lotSpotlight) closeLotSpotlight();
+});
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && !lotSpotlight.hidden) closeLotSpotlight();
+});
 
 adminLoginForm.addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -241,6 +260,7 @@ function render() {
   shareUrl.value = storedShareUrl;
   renderQr(storedShareUrl);
   renderAdminAccess();
+  renderSpotlight();
 }
 
 function createItemCard(item) {
@@ -257,6 +277,10 @@ function createItemCard(item) {
   card.querySelector(".leader").textContent = leader ? `Meilleure offre : ${leader.bidder}` : "Aucune enchere";
   card.querySelector('input[name="amount"]').value = minimumBid;
   card.querySelector('input[name="amount"]').min = minimumBid;
+  card.addEventListener("click", (event) => {
+    if (event.target.closest("button, input, textarea, select, a, form")) return;
+    openLotSpotlight(item.id);
+  });
 
   const deleteButton = card.querySelector(".delete-button");
   deleteButton.hidden = !isAdminUnlocked();
@@ -303,6 +327,35 @@ function createItemCard(item) {
   });
 
   return card;
+}
+
+function openLotSpotlight(itemId) {
+  spotlightItemId = itemId;
+  renderSpotlight();
+  lotSpotlight.hidden = false;
+  document.body.classList.add("spotlight-open");
+}
+
+function closeLotSpotlight() {
+  lotSpotlight.hidden = true;
+  spotlightItemId = null;
+  document.body.classList.remove("spotlight-open");
+}
+
+function renderSpotlight() {
+  if (!spotlightItemId || lotSpotlight.hidden) return;
+  const item = state.items.find((candidate) => candidate.id === spotlightItemId);
+  if (!item) {
+    closeLotSpotlight();
+    return;
+  }
+  const leader = getLeader(item);
+  spotlightMedia.style.setProperty("--image", item.image ? `url("${item.image}")` : "");
+  spotlightCategory.textContent = item.category;
+  spotlightTitle.textContent = item.name;
+  spotlightDescription.textContent = item.description;
+  spotlightBid.textContent = formatCurrency(getCurrentBid(item));
+  spotlightLeader.textContent = leader ? `Meilleure offre : ${leader.bidder}` : "Aucune enchere pour le moment";
 }
 
 function getLeader(item) {

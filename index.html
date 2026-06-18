@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#8b3f3f">
     <title>Encheres du mariage</title>
     <link rel="manifest" href="manifest.webmanifest">
-    <link rel="stylesheet" href="styles.css?v=20260618-2">
+    <link rel="stylesheet" href="styles.css?v=20260618-3">
     <link rel="icon" href="icon.svg" type="image/svg+xml">
   </head>
   <body>
@@ -142,6 +142,20 @@
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+    <div class="lot-spotlight" id="lotSpotlight" hidden role="dialog" aria-modal="true" aria-labelledby="spotlightTitle">
+      <button class="spotlight-close" id="closeSpotlight" type="button" aria-label="Fermer">×</button>
+      <div class="spotlight-media" id="spotlightMedia"></div>
+      <section class="spotlight-content">
+        <p class="spotlight-category" id="spotlightCategory"></p>
+        <h2 id="spotlightTitle"></h2>
+        <p class="spotlight-description" id="spotlightDescription"></p>
+        <div class="spotlight-bid">
+          <span id="spotlightBid"></span>
+          <small id="spotlightLeader"></small>
+        </div>
+      </section>
+    </div>
+
     <template id="itemTemplate">
       <article class="lot-card">
         <div class="lot-media"></div>
@@ -168,7 +182,7 @@
     </template>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="supabase-config.js?v=20260618-2"></script>
-    <script src="app.js?v=20260618-2"></script>
+    <script src="supabase-config.js?v=20260618-3"></script>
+    <script src="app.js?v=20260618-3"></script>
   </body>
 </html>
