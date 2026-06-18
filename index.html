@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#8b3f3f">
+    <title>Encheres du mariage</title>
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="icon.svg" type="image/svg+xml">
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Vente aux encheres</p>
+        <h1>Le mariage de Camille & Julien</h1>
+      </div>
+      <button class="ghost-button" id="installButton" type="button" hidden>Installer</button>
+    </header>
+
+    <main>
+      <section class="status-strip" aria-label="Resume des encheres">
+        <article>
+          <span id="itemCount">0</span>
+          <small>objets</small>
+        </article>
+        <article>
+          <span id="bidCount">0</span>
+          <small>encheres</small>
+        </article>
+        <article>
+          <span id="totalRaised">0 EUR</span>
+          <small>promesses</small>
+        </article>
+      </section>
+
+      <nav class="tabs" aria-label="Navigation">
+        <button class="tab is-active" type="button" data-view="guestView">Invites</button>
+        <button class="tab" type="button" data-view="adminView">Admin</button>
+        <button class="tab" type="button" data-view="shareView">QR code</button>
+      </nav>
+
+      <section id="guestView" class="view is-active">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Catalogue</p>
+            <h2>Choisis un souvenir et fais monter les encheres</h2>
+          </div>
+          <label class="search">
+            <span>Rechercher</span>
+            <input id="searchInput" type="search" placeholder="Objet, categorie, invite...">
+          </label>
+        </div>
+        <div class="item-grid" id="itemGrid"></div>
+      </section>
+
+      <section id="adminView" class="view">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Organisation</p>
+            <h2>Ajouter les lots de la soiree</h2>
+          </div>
+          <button class="ghost-button" id="resetDemoButton" type="button">Recharger l'exemple</button>
+        </div>
+
+        <form class="admin-form" id="itemForm">
+          <label>
+            Nom de l'objet
+            <input name="name" required maxlength="80" placeholder="Ex. Magnum de champagne signe">
+          </label>
+          <label>
+            Categorie
+            <input name="category" required maxlength="40" placeholder="Souvenir, gourmandise, experience">
+          </label>
+          <label>
+            Prix de depart (EUR)
+            <input name="startPrice" required type="number" min="1" step="1" value="20">
+          </label>
+          <label>
+            Pas minimum (EUR)
+            <input name="step" required type="number" min="1" step="1" value="5">
+          </label>
+          <label class="span-2">
+            Description
+            <textarea name="description" required maxlength="220" rows="3" placeholder="Decris le lot avec une petite touche personnelle."></textarea>
+          </label>
+          <label class="span-2">
+            URL d'image facultative
+            <input name="image" type="url" placeholder="https://...">
+          </label>
+          <button class="primary-button span-2" type="submit">Ajouter l'objet</button>
+        </form>
+
+        <div class="data-actions">
+          <button class="ghost-button" id="exportButton" type="button">Exporter les donnees</button>
+          <label class="file-button">
+            Importer
+            <input id="importInput" type="file" accept="application/json">
+          </label>
+        </div>
+      </section>
+
+      <section id="shareView" class="view">
+        <div class="share-layout">
+          <div>
+            <p class="eyebrow">Partage</p>
+            <h2>QR code pour les invites</h2>
+            <p class="muted">Une fois l'app mise en ligne, colle son adresse ici. Les invites scanneront le QR code, ouvriront l'application et pourront l'installer sur leur telephone.</p>
+            <label>
+              Adresse de l'application
+              <input id="shareUrl" type="url" placeholder="https://ton-domaine.fr/encheres">
+            </label>
+            <button class="primary-button" id="saveShareUrl" type="button">Generer le QR code</button>
+          </div>
+          <div class="qr-card">
+            <img id="qrImage" alt="QR code de l'application">
+            <p id="qrCaption">Le QR code apparaitra ici.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <template id="itemTemplate">
+      <article class="lot-card">
+        <div class="lot-media"></div>
+        <div class="lot-body">
+          <div class="lot-title-row">
+            <div>
+              <p class="lot-category"></p>
+              <h3></h3>
+            </div>
+            <button class="icon-button delete-button" type="button" title="Supprimer">×</button>
+          </div>
+          <p class="lot-description"></p>
+          <div class="bid-line">
+            <span class="current-bid"></span>
+            <small class="leader"></small>
+          </div>
+          <form class="bid-form">
+            <input name="bidder" required maxlength="40" placeholder="Ton prenom">
+            <input name="amount" required type="number" min="1" step="1">
+            <button class="primary-button" type="submit">Miser</button>
+          </form>
+        </div>
+      </article>
+    </template>
+
+    <script src="app.js"></script>
+  </body>
+</html>

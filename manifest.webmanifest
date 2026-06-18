@@ -1,0 +1,17 @@
+{
+  "name": "Encheres du mariage",
+  "short_name": "Encheres",
+  "description": "Application d'encheres pour une soiree de mariage.",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#fff9f3",
+  "theme_color": "#8b3f3f",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
