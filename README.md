@@ -16,10 +16,10 @@ Premiere version autonome d'une application web installable sur mobile.
 
 Ouvre `index.html` dans un navigateur pour tester rapidement.
 
-Pour tester l'installation PWA et le service worker, sers le dossier avec le petit serveur inclus :
+Pour tester l'installation PWA et le service worker, sers le dossier avec un petit serveur local :
 
 ```powershell
-& 'C:\Users\lerou\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin\node.exe' server.js
+npx serve .
 ```
 
 Puis ouvre `http://localhost:5173`.
